@@ -13,19 +13,17 @@ Visit the live homepage:
 ## What's Included So Far
 
 - A custom homepage with a glowing countdown orb
-- Draygyn’s branding and project intro
 - GitHub Pages hosting
 
 ## What’s Coming Next
 
 - Discord bot integration
-- Real-time battle tracking
 - Tournament creation and ranking
 - Player and team dashboards
 
 ## Credits
 
-Built with joy and a healthy dose of chaos by Dave.  
+Built with joy and a healthy dose of chaos by Draygyn.  
 Fronted by the one and only magical tournament beaver.
 
 ---
