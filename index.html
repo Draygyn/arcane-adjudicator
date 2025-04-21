@@ -6,49 +6,116 @@
   <title>Arcane Adjudicator</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0f0f1f;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at center, #1a1a2e, #0f0f1f);
       color: #eee;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
       padding: 2rem;
     }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    header img {
+      width: 150px;
+      border-radius: 12px;
+      box-shadow: 0 0 30px #6fffe9;
+    }
     h1 {
-      color: #6fffe9;
+      font-size: 2.8rem;
+      margin: 20px 0 10px;
+      background: linear-gradient(to right, #6fffe9, #9c7aff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 15px rgba(111, 255, 233, 0.3);
     }
-    #results {
-      margin-top: 2rem;
-      width: 100%;
-      max-width: 800px;
-      background: #1a1a2e;
+    p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      text-align: center;
+      opacity: 0.85;
+    }
+    .countdown-ball {
+      margin: 30px 0;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #6fffe9 0%, #0f0f1f 90%);
+      box-shadow: 0 0 40px rgba(111, 255, 233, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #0f0f1f;
+      text-align: center;
+      padding: 20px;
+    }
+    #api-data {
+      margin-top: 40px;
       padding: 1rem;
-      border-radius: 8px;
-      overflow-x: auto;
-    }
-    pre {
+      background-color: #1a1a2e;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 900px;
+      color: #6fffe9;
+      font-family: monospace;
       white-space: pre-wrap;
-      word-wrap: break-word;
+      text-align: left;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.7; }
     }
   </style>
 </head>
 <body>
-  <h1>Arcane Adjudicator</h1>
-  <p>Displaying live data from the Splinterlands API:</p>
-  <div id="results">
-    <pre>Loading API data...</pre>
+  <header>
+    <img src="beaver magic.png" alt="Arcane Adjudicator Logo" />
+    <h1>Arcane Adjudicator</h1>
+    <p>Crafted by Dave and powered by Draygyn — the arcane force behind Splinterlands battle tracking and tournament orchestration.</p>
+  </header>
+
+  <div class="countdown-ball" id="countdown"></div>
+
+  <div id="api-data">
+    <pre>Loading land data from Splinterlands...</pre>
   </div>
 
   <script>
+    const targetDate = new Date("2025-05-13T00:00:00");
+    const countdownEl = document.getElementById("countdown");
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        countdownEl.textContent = "The packs are open!";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      countdownEl.textContent = `${days} day${days !== 1 ? 's' : ''} until May 13`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 3600000); // update every hour
+
+    // Fetch API
     fetch("https://vapi.splinterlands.com/land/deeds?player=draygyn")
-      .then(res => res.json())
+      .then(response => response.json())
       .then(data => {
-        document.querySelector("#results pre").textContent =
-          JSON.stringify(data, null, 2);
+        document.querySelector("#api-data pre").textContent = JSON.stringify(data, null, 2);
       })
       .catch(err => {
-        document.querySelector("#results pre").textContent =
-          "Error fetching data: " + err.message;
+        document.querySelector("#api-data pre").textContent = "Error fetching data: " + err.message;
       });
   </script>
 </body>
