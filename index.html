@@ -48,7 +48,7 @@
 
   <script>
     const player = "draygyn";
-    const apiUrl = `https://corsproxy.io/?https://api2.splinterlands.com/battle/history?username=${player}`;
+    const apiUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://api2.splinterlands.com/battle/history?username=' + player)}`;
 
     fetch(apiUrl)
       .then(res => res.json())
@@ -56,7 +56,6 @@
         const container = document.getElementById("battle-log");
         container.innerHTML = ""; // Clear loading text
 
-        // Filter for only Modern + Ranked battles
         const battles = data.battles.filter(b =>
           b.match_type === "Ranked" && b.modern === true
         ).slice(0, 10);
