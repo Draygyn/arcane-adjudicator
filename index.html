@@ -48,8 +48,9 @@
 
   <script>
     const player = "draygyn";
+    const apiUrl = `https://corsproxy.io/?https://api2.splinterlands.com/battle/history?username=${player}`;
 
-    fetch(`https://api2.splinterlands.com/battle/history?username=${player}`)
+    fetch(apiUrl)
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("battle-log");
