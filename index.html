@@ -3,67 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Arcane Adjudicator</title>
+  <title>Draygyn's Modern Ranked Battles</title>
   <style>
     body {
-      background-color: #121021;
+      background-color: #0f0f1f;
       color: #aaf2ff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
+      padding: 2rem;
       text-align: center;
-      padding: 40px;
     }
-
     h1 {
-      font-size: 3em;
-      color: #89f0ff;
+      color: #6fffe9;
+      margin-bottom: 1rem;
     }
-
-    #plots {
-      margin-top: 30px;
-      padding: 20px;
-      background-color: #1c1a30;
-      border-radius: 10px;
-      display: inline-block;
+    .battle-log {
+      background: #1a1a2e;
+      padding: 1rem;
+      border-radius: 8px;
+      max-width: 800px;
+      margin: auto;
       text-align: left;
     }
-
-    .plot {
-      padding: 5px 0;
+    .battle {
       border-bottom: 1px solid #444;
+      padding: 10px 0;
     }
-
-    .plot:last-child {
+    .battle:last-child {
       border-bottom: none;
+    }
+    .win { color: #00ff88; font-weight: bold; }
+    .loss { color: #ff4e4e; font-weight: bold; }
+    a {
+      color: #89eaff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <h1>Arcane Adjudicator</h1>
-  <p>Showing all plot IDs owned by <strong>draygyn</strong>:</p>
-
-  <div id="plots">Loading plots...</div>
+  <h1>Draygyn's Last 10 Modern Ranked Battles</h1>
+  <div id="battle-log" class="battle-log">Loading battle history...</div>
 
   <script>
-    fetch("https://vapi.splinterlands.com/land/deeds?player=draygyn")
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById('plots');
-        container.innerHTML = ''; // Clear "Loading..."
+    const player = "draygyn";
 
-        if (!data.data || !data.data.deeds || data.data.deeds.length === 0) {
-          container.textContent = 'No plots found.';
+    fetch(`https://api2.splinterlands.com/battle/history?username=${player}`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("battle-log");
+        container.innerHTML = ""; // Clear loading text
+
+        // Filter for only Modern + Ranked battles
+        const battles = data.battles.filter(b =>
+          b.match_type === "Ranked" && b.modern === true
+        ).slice(0, 10);
+
+        if (battles.length === 0) {
+          container.textContent = "No recent Modern Ranked battles found.";
           return;
         }
 
-        data.data.deeds.forEach(deed => {
-          const div = document.createElement('div');
-          div.className = 'plot';
-          div.textContent = `Plot ID: ${deed.plot_id}`;
+        battles.forEach(battle => {
+          const opponent = battle.player_1 === player ? battle.player_2 : battle.player_1;
+          const didWin = battle.winner === player;
+          const date = new Date(battle.created_date).toLocaleString();
+          const battleLink = `https://splinterlands.com?p=battle&id=${battle.battle_queue_id}`;
+
+          const div = document.createElement("div");
+          div.className = "battle";
+          div.innerHTML = `
+            <strong>Date:</strong> ${date}<br>
+            <strong>Opponent:</strong> ${opponent}<br>
+            <strong>Result:</strong> <span class="${didWin ? 'win' : 'loss'}">${didWin ? 'Win' : 'Loss'}</span><br>
+            <a href="${battleLink}" target="_blank">View Battle Replay</a>
+          `;
           container.appendChild(div);
         });
       })
       .catch(err => {
-        document.getElementById('plots').textContent = 'Failed to load plots.';
+        document.getElementById("battle-log").textContent = "Error loading battle history.";
         console.error(err);
       });
   </script>
